@@ -21,6 +21,7 @@ func middlewareA(next http.Handler) http.Handler {
 		if r.URL.Path == "/favicon.ico" {
 			return
 		}
+
 		log.Println("Executing middle ware A")
 
 		next.ServeHTTP(w, r) //everything in this function is executed before the middleware function ends
@@ -51,7 +52,7 @@ func middlewareB(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r) //everything in this function is executed before the middleware function ends
 
 		//this is executed on the way up
-	
+		log.Println("Executing middleware B Again")
 
 	})
 }

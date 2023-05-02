@@ -24,6 +24,7 @@ func middleware(next http.Handler) http.Handler {
 
 		//this is executed on the way down to the handeler
 		log.Println("Executing middleware")
+
 		log.Printf("IP address: %s ", r.RemoteAddr)
 		log.Println("URL Entered: ", r.URL.Path)
 
@@ -50,7 +51,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		"</p></h2>"
 
 	data := UserData{
-		PageTitle: "Test Page",
+		PageTitle: "middle ware basics Page",
 		Body:      template.HTML(body),
 	}
 
@@ -58,7 +59,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	ts.Execute(w, data)
 
-	// log.Println("home page working")
+	log.Println("home page working")
 
 }
 
@@ -71,6 +72,7 @@ func main() {
 
 	// to access images from the public dir
 	mux.Handle("/public/", http.StripPrefix("/public/", fs))
+
 
 	//handeler that serves the home page
 	mux.Handle("/", middleware(http.HandlerFunc(homeHandler)))
