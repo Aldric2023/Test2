@@ -1,9 +1,9 @@
 package main
 
-import(
-	"log"
+import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -12,12 +12,20 @@ type UserData struct {
 	Body      template.HTML
 }
 
-
 func middleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		//favicon.ico is a reuest made by the browser automatically, i will ignore it
+		//just return when i encounter this request just to keep the log clean
+		if r.URL.Path == "/favicon.ico" {
+            return
+        }
+
+
 		//this is executed on the way down to the handeler
 		log.Println("Executing middleware")
+		log.Printf("IP address: %s ", r.RemoteAddr)
 		log.Println(r.URL.Path)
 
 		if r.URL.Path != "/" {
@@ -26,10 +34,14 @@ func middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		//we now run our homehandeler, the function we passed into the middleware
+		
+		next.ServeHTTP(w, r)//everything in this function is executed before the middleware function ends
+
+
 		//this is executed on the way up
 		log.Println("Executing middleware again")
-		log.Printf("IP address: %s ", r.RemoteAddr)
+		
 	})
 }
 
@@ -52,7 +64,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-
 func main() {
 	// serve static files from the "static" directory
 	mux := http.NewServeMux()
@@ -61,7 +72,7 @@ func main() {
 	fs := http.FileServer(http.Dir("public"))
 
 	// to access images from the public dir
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/public/", http.StripPrefix("/public/", fs))
 
 	//handeler that serves the home page
 	mux.Handle("/", middleware(http.HandlerFunc(homeHandler)))
