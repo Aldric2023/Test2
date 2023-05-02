@@ -51,7 +51,7 @@ func middlewareB(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r) //everything in this function is executed before the middleware function ends
 
 		//this is executed on the way up
-		log.Println("Executing middleware B again")
+	
 
 	})
 }
